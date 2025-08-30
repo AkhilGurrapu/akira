@@ -1,0 +1,116 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code
+.vscode/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+.env
+service-account-key.json
+
+# Secrets and env files
+*.env
+goldsarva/.env
+
+# Flutter metadata
+.metadata
+.flutter-plugins
+
+# Android specific
+**/.gradle/
+android/local.properties
+**/*.keystore
+**/*.jks
+android/**/captures/
+android/**/outputs/
+android/.gradle/
+android/app/build/
+android/gradle/
+android/gradlew*
+android/gradle.properties
+android/**/generated/
+android/**/intermediates/
+android/**/tmp/
+android/**/transforms/
+android/**/.cxx/
+android/**/.externalNativeBuild/
+android/**/obj/
+
+# Google services mobile configs (secrets)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# iOS/macOS Pods and Xcode user data
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+macos/Pods/
+macos/.symlinks/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/project.xcworkspace/xcuserdata/
+**/*.xcuserstate
+**/DerivedData/
+**/.generated/
+**/*.pbxuser
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+**/*.moved-aside
+
+# OS files
+Thumbs.db
+
+# goldsarva (Node demo) artifacts
+goldsarva/node_modules/
+goldsarva/package-lock.json
+goldsarva/.vercel
+goldsarva/.next
+goldsarva/dist/
+goldsarva/.cache/
+goldsarva/.parcel-cache/
+goldsarva/.turbo/
+goldsarva/yarn.lock
+goldsarva/pnpm-lock.yaml
+goldsarva/.env.*
