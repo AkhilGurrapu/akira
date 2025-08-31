@@ -30,61 +30,149 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF1E272E),
       body: Row(
         children: [
+          // Left side - Main area for image upload/display
           Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Virtual Try-On',
-                        style: TextStyle(fontSize: 32, color: Colors.white),
+            flex: 3,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0F172A),
+                    Color(0xFF1E293B),
+                    Color(0xFF334155),
+                  ],
+                ),
+              ),
+              child: SafeArea(
+                child: Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(32),
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E293B).withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: const Color(0xFF334155),
+                        width: 2,
                       ),
-                      const SizedBox(height: 16),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Text(
-                          'Virtually try on authentic Indian traditional dresses and jewelry using your camera or by uploading a photo. Powered by Gemini, it lets you drag and drop catalog items onto your image and see a realistic transformation.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.white70),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // App Logo and Title
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.auto_awesome,
+                            color: Colors.white,
+                            size: 40,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () => _pickImage(ImageSource.camera),
-                            icon: const Icon(Icons.camera_alt),
-                            label: const Text('Use Camera'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.yellow,
-                              foregroundColor: Colors.black,
+                        const SizedBox(height: 24),
+                        
+                        Text(
+                          'Get Started',
+                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: Text(
+                            'Use your camera or upload a photo to begin.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontSize: 18,
+                              color: const Color(0xFF94A3B8),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          ElevatedButton.icon(
-                            onPressed: () => _pickImage(ImageSource.gallery),
-                            icon: const Icon(Icons.upload_file),
-                            label: const Text('Upload Image'),
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 40),
+                        
+                        // Action Buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () => _pickImage(ImageSource.camera),
+                              icon: const Icon(Icons.camera_alt, size: 20),
+                              label: const Text(
+                                'Use Camera',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF8C00),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            OutlinedButton.icon(
+                              onPressed: () => _pickImage(ImageSource.gallery),
+                              icon: const Icon(Icons.upload, size: 20),
+                              label: const Text(
+                                'Upload Image',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: const Color(0xFF94A3B8),
+                                side: const BorderSide(
+                                  color: Color(0xFF475569),
+                                  width: 1.5,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          const SidePanel(),
+          
+          // Right side - Always visible catalog
+          const SidePanel(hasImage: false),
         ],
       ),
     );
   }
+
+
 }

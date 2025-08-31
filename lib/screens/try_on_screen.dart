@@ -89,115 +89,451 @@ class _TryOnScreenState extends State<TryOnScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 800;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF1E272E),
       appBar: AppBar(
-        title: const Text('Try-On'),
-        backgroundColor: const Color(0xFF2C3A47),
-        actions: [
-          DropdownButton<String>(
-            value: _selectedPrompt,
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedPrompt = newValue!;
-              });
-            },
-            items: _samplePrompts.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value, style: const TextStyle(color: Colors.black)),
-              );
-            }).toList(),
-            dropdownColor: Colors.white,
-            style: const TextStyle(color: Colors.white),
-            iconEnabledColor: Colors.white,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 20,
+              color: Color(0xFF181114),
+            ),
           ),
-        ],
-      ),
-      body: Row(
-        children: [
-          Expanded(
-            child: DragTarget<CatalogItem>(
-              onAcceptWithDetails: (details) {
-                // Convert global offset to local within the drop area
-                final renderObject = _dropAreaKey.currentContext?.findRenderObject();
-                if (renderObject is RenderBox) {
-                  final local = renderObject.globalToLocal(details.offset);
-                  _generateImage(details.data, local);
-                } else {
-                  _generateImage(details.data, details.offset);
-                }
-              },
-              builder: (context, candidateData, rejectedData) {
-                return RepaintBoundary(
-                  key: _repaintKey,
-                  child: Stack(
-                    key: _dropAreaKey,
-                    alignment: Alignment.center,
-                    children: [
-                      Center(child: Image.file(widget.image)),
-                      ..._overlays.asMap().entries.map((entry) {
-                        final i = entry.key;
-                        final item = entry.value;
-                        return Positioned(
-                          left: item.position.dx,
-                          top: item.position.dy,
-                          child: GestureDetector(
-                            onPanUpdate: (details) {
-                              final size = _getDropAreaSize();
-                              final next = item.position + details.delta;
-                              setState(() {
-                                _overlays[i] = item.copyWith(
-                                  position: _clampToBounds(next, item.size, size),
-                                );
-                              });
-                            },
-                            onLongPress: () {
-                              setState(() {
-                                _overlays.removeAt(i);
-                              });
-                            },
-                            child: Stack(
-                              alignment: Alignment.topRight,
-                              children: [
-                                Image.memory(item.bytes, width: item.size.width, height: item.size.height),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 2, right: 2),
-                                  decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(12)),
-                                  child: const Icon(Icons.drag_indicator, size: 16, color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
-                      if (_isLoading) const CircularProgressIndicator(),
-                    ],
+        ),
+        title: const Text(
+          'Virtual Try-On',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF181114),
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          if (_overlays.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _overlays.clear();
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('All overlays cleared'),
+                    backgroundColor: const Color(0xFFEC1380),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
               },
+              icon: const Icon(Icons.clear_all, color: Color(0xFF181114)),
+              tooltip: 'Clear all overlays',
             ),
+          IconButton(
+            onPressed: _exportComposition,
+            icon: const Icon(Icons.download, color: Color(0xFF181114)),
+            tooltip: 'Download image',
           ),
-          const SidePanel(),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _exportComposition,
-        icon: const Icon(Icons.download),
-        label: const Text('Download'),
-        backgroundColor: Colors.yellow,
-        foregroundColor: Colors.black,
+      body: Column(
+        children: [
+          if (isSmallScreen) _buildMobilePromptSelector(),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E293B),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFF334155),
+                        width: 1,
+                      ),
+                    ),
+                    child: DragTarget<CatalogItem>(
+                      onAcceptWithDetails: (details) {
+                        final renderObject = _dropAreaKey.currentContext?.findRenderObject();
+                        if (renderObject is RenderBox) {
+                          final local = renderObject.globalToLocal(details.offset);
+                          _generateImage(details.data, local);
+                        } else {
+                          _generateImage(details.data, details.offset);
+                        }
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        final isDragOver = candidateData.isNotEmpty;
+                        
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isDragOver 
+                                ? const Color(0xFF6366F1)
+                                : const Color(0xFF334155),
+                              width: isDragOver ? 2 : 1,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: RepaintBoundary(
+                              key: _repaintKey,
+                              child: Stack(
+                                key: _dropAreaKey,
+                                fit: StackFit.expand,
+                                children: [
+                                  // Background image with proper sizing
+                                  Center(
+                                    child: Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth: size.width * 0.8,
+                                        maxHeight: size.height * 0.8,
+                                      ),
+                                      child: Image.file(
+                                        widget.image,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                  
+                                  // Drag hint overlay
+                                  if (candidateData.isNotEmpty)
+                                    Container(
+                                      color: const Color(0xFF6366F1).withOpacity(0.1),
+                                      child: const Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.add_circle_outline,
+                                              size: 48,
+                                              color: Color(0xFFEC1380),
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              'Drop here to try on',
+                                              style: TextStyle(
+                                                color: Color(0xFFEC1380),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  
+                                  // Overlays
+                                  ..._overlays.asMap().entries.map((entry) {
+                                    final i = entry.key;
+                                    final item = entry.value;
+                                    return Positioned(
+                                      left: item.position.dx,
+                                      top: item.position.dy,
+                                      child: _buildOverlayItem(item, i),
+                                    );
+                                  }),
+                                  
+                                  // Loading indicator
+                                  if (_isLoading)
+                                    Container(
+                                      color: Colors.black.withOpacity(0.3),
+                                      child: const Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                                                        CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFFEC1380),
+                              ),
+                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              'Generating your virtual try-on...',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  
+                                  // Empty state
+                                  if (_overlays.isEmpty && !_isLoading)
+                                    Positioned(
+                                      bottom: 20,
+                                      left: 20,
+                                      right: 20,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF0F172A).withOpacity(0.9),
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: const Color(0xFF334155),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const Row(
+                                          children: [
+                                            Icon(
+                                              Icons.arrow_forward,
+                                              color: Color(0xFF6366F1),
+                                              size: 20,
+                                            ),
+                                            SizedBox(width: 12),
+                                            Expanded(
+                                              child: Text(
+                                                'Drag items from the catalog to see how they look on you',
+                                                style: TextStyle(
+                                                  color: Color(0xFFCBD5E1),
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                if (!isSmallScreen) const SidePanel(hasImage: true),
+              ],
+            ),
+          ),
+        ],
       ),
-      bottomSheet: _error.isNotEmpty
-          ? Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.red.withOpacity(0.8),
-              child: Text(
-                _error,
-                style: const TextStyle(color: Colors.white),
-              ),
+      bottomSheet: _error.isNotEmpty ? _buildErrorSheet() : null,
+      floatingActionButton: _overlays.isNotEmpty
+          ? FloatingActionButton.extended(
+              onPressed: _exportComposition,
+              icon: const Icon(Icons.download),
+              label: const Text('Export'),
+              backgroundColor: const Color(0xFFEC1380),
+              foregroundColor: Colors.white,
             )
           : null,
+    );
+  }
+
+  Widget _buildOverlayItem(_OverlayItem item, int index) {
+    return GestureDetector(
+      onPanUpdate: (details) {
+        final size = _getDropAreaSize();
+        final next = item.position + details.delta;
+        setState(() {
+          _overlays[index] = item.copyWith(
+            position: _clampToBounds(next, item.size, size),
+          );
+        });
+      },
+      onLongPress: () {
+        setState(() {
+          _overlays.removeAt(index);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Overlay removed'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF6366F1).withOpacity(0.3),
+              blurRadius: 8,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.memory(
+                item.bytes,
+                width: item.size.width,
+                height: item.size.height,
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Control buttons
+            Positioned(
+              top: 4,
+              right: 4,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A).withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(
+                      Icons.drag_indicator,
+                      size: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  GestureDetector(
+                    onTap: () async {
+                      // Export this specific overlay
+                      await _exportSingleOverlay(item.bytes);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6366F1).withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(
+                        Icons.download,
+                        size: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPromptSelector() {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 300),
+      child: DropdownButton<String>(
+        value: _selectedPrompt,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedPrompt = newValue!;
+          });
+        },
+        items: _samplePrompts.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value.length > 30 ? '${value.substring(0, 30)}...' : value,
+              style: const TextStyle(fontSize: 14),
+            ),
+          );
+        }).toList(),
+        isExpanded: true,
+        underline: Container(),
+        icon: const Icon(Icons.expand_more, size: 20),
+      ),
+    );
+  }
+
+  Widget _buildMobilePromptSelector() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF334155)),
+      ),
+      child: DropdownButton<String>(
+        value: _selectedPrompt,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedPrompt = newValue!;
+          });
+        },
+        items: _samplePrompts.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          );
+        }).toList(),
+        isExpanded: true,
+        underline: Container(),
+        dropdownColor: const Color(0xFF1E293B),
+        icon: const Icon(Icons.expand_more, color: Colors.white),
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildErrorSheet() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Color(0xFFDC2626),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            const Icon(
+              Icons.error_outline,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                _error,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _error = '';
+                });
+              },
+              icon: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -226,6 +562,24 @@ class _TryOnScreenState extends State<TryOnScreen> {
       final file = await File('${dir.path}/try_on_${DateTime.now().millisecondsSinceEpoch}.png').create();
       await file.writeAsBytes(bytes);
       await Share.shareXFiles([XFile(file.path)], text: 'Virtual Try-On result');
+    } catch (e) {
+      _setError('Export failed: $e');
+    }
+  }
+
+  Future<void> _exportSingleOverlay(Uint8List imageBytes) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final file = await File('${dir.path}/overlay_${DateTime.now().millisecondsSinceEpoch}.png').create();
+      await file.writeAsBytes(imageBytes);
+      await Share.shareXFiles([XFile(file.path)], text: 'Generated overlay');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Overlay exported successfully'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
       _setError('Export failed: $e');
     }
