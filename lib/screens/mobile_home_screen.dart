@@ -21,7 +21,7 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
   final GeminiService _geminiService = GeminiService();
   String _selectedSource = 'Upload';
   int _selectedTabIndex = 0;
-  int _selectedNavIndex = 0;
+
   File? _uploadedImage;
   Uint8List? _generatedImageBytes;
   bool _isGenerating = false;
@@ -147,6 +147,9 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             // Source Toggle
             _buildSourceToggle(),
             
+            // Change Photo Button (always visible when image is uploaded)
+            if (_uploadedImage != null) _buildChangePhotoButton(),
+            
             // Main Image Area
             Expanded(
               child: SingleChildScrollView(
@@ -161,45 +164,26 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigation(),
+
     );
   }
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(bottom: BorderSide(color: Color(0xFFF3F4F6), width: 1)),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Icon(
-              Icons.arrow_back,
-              size: 20,
-              color: Color(0xFF181114),
-            ),
+      child: const Center(
+        child: Text(
+          'Virtual Try-On',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF181114),
           ),
-          const Expanded(
-            child: Text(
-              'Virtual Try-On',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF181114),
-              ),
-            ),
-          ),
-          const SizedBox(width: 40), // Balance the back button
-        ],
+        ),
       ),
     );
   }
@@ -249,6 +233,35 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildChangePhotoButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _pickImage,
+        icon: Icon(
+          _selectedSource == 'Camera' ? Icons.camera_alt : Icons.upload_file,
+          size: 20,
+        ),
+        label: Text(
+          _selectedSource == 'Camera' ? 'Take New Photo' : 'Upload New Photo',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFEC1380),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ),
     );
   }
@@ -695,61 +708,5 @@ class _MobileHomeScreenState extends State<MobileHomeScreen> {
     );
   }
 
-  Widget _buildBottomNavigation() {
-    final items = [
-      {'icon': Icons.home, 'label': 'Home'},
-      {'icon': Icons.search, 'label': 'Catalog'},
-      {'icon': Icons.favorite_border, 'label': 'Favorites'},
-      {'icon': Icons.person_outline, 'label': 'Profile'},
-    ];
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFF3F4F6), width: 1)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Container(
-          height: 56,
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: items.asMap().entries.map((entry) {
-              final index = entry.key;
-              final item = entry.value;
-              final isSelected = index == _selectedNavIndex;
-              
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedNavIndex = index;
-                  });
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      item['icon'] as IconData,
-                      size: 24,
-                      color: isSelected ? const Color(0xFFEC1380) : const Color(0xFF6B7280),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item['label'] as String,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: isSelected ? const Color(0xFFEC1380) : const Color(0xFF6B7280),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
 }

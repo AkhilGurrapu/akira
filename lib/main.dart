@@ -1,4 +1,4 @@
-import 'package:akira/screens/mobile_home_screen.dart';
+import 'package:akira/screens/main_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MobileHomeScreen(),
+      home: const MainNavigation(),
     );
   }
 }
