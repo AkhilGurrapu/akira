@@ -1,9 +1,18 @@
 import 'package:akira/screens/main_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Hive
+  await Hive.initFlutter();
+  
+  // Load environment variables
   await dotenv.load(fileName: ".env");
+  
   runApp(const MyApp());
 }
 
@@ -12,7 +21,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Akira - Virtual Try-On',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:akira/screens/mobile_home_screen.dart';
-import 'package:akira/screens/catalog_screen.dart';
+import 'package:get/get.dart';
+import 'package:akira/screens/updated_mobile_home_screen.dart';
+import 'package:akira/screens/new_catalog_screen.dart';
 import 'package:akira/screens/video_screen.dart';
 import 'package:akira/screens/profile_screen.dart';
+
+class BottomNavigationController extends GetxController {
+  var selectedIndex = 0.obs;
+  
+  void changePage(int index) {
+    selectedIndex.value = index;
+  }
+}
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -13,10 +22,17 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
+  late final BottomNavigationController _bottomNavController;
+
+  @override
+  void initState() {
+    super.initState();
+    _bottomNavController = Get.put(BottomNavigationController());
+  }
   
   final List<Widget> _screens = [
-    const MobileHomeScreen(),
-    const CatalogScreen(),
+    const UpdatedMobileHomeScreen(),
+    const NewCatalogScreen(),
     const VideoScreen(),
     const ProfileScreen(),
   ];
@@ -25,6 +41,7 @@ class _MainNavigationState extends State<MainNavigation> {
     setState(() {
       _selectedIndex = index;
     });
+    _bottomNavController.changePage(index);
   }
 
   @override

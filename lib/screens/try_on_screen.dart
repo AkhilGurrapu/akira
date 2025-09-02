@@ -13,8 +13,9 @@ import 'package:flutter/material.dart';
 
 class TryOnScreen extends StatefulWidget {
   final File image;
+  final dynamic preselectedItem; // Can be CatalogItem or PinterestItem
 
-  const TryOnScreen({super.key, required this.image});
+  const TryOnScreen({super.key, required this.image, this.preselectedItem});
 
   @override
   State<TryOnScreen> createState() => _TryOnScreenState();

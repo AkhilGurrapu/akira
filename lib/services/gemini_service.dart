@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:http/http.dart' as http;
 
 class GeminiService {
   final String _projectId = dotenv.env['GOOGLE_PROJECT_ID']!;
@@ -43,6 +44,74 @@ class GeminiService {
 
     final clothingBytes = await rootBundle.load(clothingAssetPath);
     final base64Clothing = base64Encode(clothingBytes.buffer.asUint8List());
+
+    final requestBody = json.encode({
+      "contents": [
+        {
+          "role": "user",
+          "parts": [
+            {"text": prompt},
+            {
+              "inlineData": {
+                "mimeType": "image/jpeg",
+                "data": base64Image,
+              }
+            },
+            {
+              "inlineData": {
+                "mimeType": "image/jpeg",
+                "data": base64Clothing,
+              }
+            }
+          ]
+        }
+      ],
+      "generationConfig": {
+        "maxOutputTokens": 32768,
+        "temperature": 1,
+        "topP": 0.95,
+        "responseModalities": ["TEXT", "IMAGE"]
+      },
+      "safetySettings": [
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_IMAGE_HATE", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_IMAGE_DANGEROUS_CONTENT", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_IMAGE_HARASSMENT", "threshold": "OFF"},
+        {"category": "HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT", "threshold": "OFF"}
+      ]
+    });
+
+    final response = await authClient.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to send request to Gemini API: ${response.body}');
+    }
+  }
+
+  Future<String> sendRequestWithUrl(
+      File image, String clothingImageUrl, String prompt) async {
+    final authClient = await _getAuthClient();
+    final url = Uri.parse(
+        'https://${_endpointHost}/v1/projects/$_projectId/locations/$_region/publishers/google/models/$_model:generateContent');
+
+    final imageBytes = await image.readAsBytes();
+    final base64Image = base64Encode(imageBytes);
+
+    // Download the clothing image from URL
+    final clothingResponse = await http.get(Uri.parse(clothingImageUrl));
+    if (clothingResponse.statusCode != 200) {
+      throw Exception('Failed to download clothing image from URL');
+    }
+    final base64Clothing = base64Encode(clothingResponse.bodyBytes);
 
     final requestBody = json.encode({
       "contents": [
