@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:akira/services/scrape_creators_pinterest_service.dart';
+import 'package:fabisy/services/scrape_creators_pinterest_service.dart';
 
 class HomeController extends GetxController {
   final ScrapeCreatorsPinterestService _pinterestService = 

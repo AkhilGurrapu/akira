@@ -1,6 +1,6 @@
-# Akira – Virtual Indian Wear Try‑On (Flutter + Vertex AI Gemini + Pinterest API)
+# fabisy – Virtual Indian Wear Try‑On (Flutter + Vertex AI Gemini + Pinterest API)
 
-Akira lets users virtually try on authentic Indian traditional wear including sarees and jewelry. The app integrates Pinterest's fashion content through Scrape Creators API and uses Vertex AI Gemini to generate realistic try-on experiences with drag-and-drop functionality.
+fabisy lets users virtually try on authentic Indian traditional wear including sarees and jewelry. The app integrates Pinterest's fashion content through Scrape Creators API and uses Vertex AI Gemini to generate realistic try-on experiences with drag-and-drop functionality.
 
 ## 🌟 Features
 

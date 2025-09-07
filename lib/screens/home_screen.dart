@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:akira/screens/try_on_screen.dart';
-import 'package:akira/widgets/side_panel.dart';
+import 'package:fabisy/screens/try_on_screen.dart';
+import 'package:fabisy/widgets/side_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 

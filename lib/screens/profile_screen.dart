@@ -54,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     
                     const Text(
-                      'Welcome to Akira',
+                      'Welcome to fabisy',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
                     _buildMenuItem(
                       icon: Icons.history_outlined,
                       title: 'Try-On History',
-                      subtitle: 'View your past virtual try-ons',
+                      subtitle: 'View your past Make Yourself Fabulouss',
                       onTap: () {},
                     ),
                     _buildMenuItem(
@@ -93,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
                     _buildMenuItem(
                       icon: Icons.share_outlined,
                       title: 'Share App',
-                      subtitle: 'Tell friends about Akira',
+                      subtitle: 'Tell friends about fabisy',
                       onTap: () {},
                     ),
                     _buildMenuItem(
@@ -121,7 +121,7 @@ class ProfileScreen extends StatelessWidget {
                       child: const Column(
                         children: [
                           Text(
-                            'Akira Virtual Try-On',
+                            'fabisy Make Yourself Fabulous',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:akira/screens/updated_mobile_home_screen.dart';
-import 'package:akira/screens/new_catalog_screen.dart';
-import 'package:akira/screens/video_screen.dart';
-import 'package:akira/screens/profile_screen.dart';
+import 'package:fabisy/screens/updated_mobile_home_screen.dart';
+import 'package:fabisy/screens/new_catalog_screen.dart';
+import 'package:fabisy/screens/video_screen.dart';
+import 'package:fabisy/screens/profile_screen.dart';
 
 class BottomNavigationController extends GetxController {
   var selectedIndex = 0.obs;

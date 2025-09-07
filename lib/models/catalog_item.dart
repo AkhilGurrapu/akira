@@ -46,7 +46,7 @@ const List<CatalogItem> dressCatalog = [
     name: 'Contemporary Saree',
     imageAssetPath: 'assets/images/saree/saree5.jpg',
     prompt:
-        "Apply the exact saree design from the second image to the person in the first image. Copy the saree's style, colors, patterns, and modern elements from the second image. Ensure the virtual try-on looks realistic with proper fit, draping, and lighting that matches the original photo.",
+        "Apply the exact saree design from the second image to the person in the first image. Copy the saree's style, colors, patterns, and modern elements from the second image. Ensure the Make Yourself Fabulous looks realistic with proper fit, draping, and lighting that matches the original photo.",
   ),
 ];
 

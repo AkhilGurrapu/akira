@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:akira/screens/try_on_screen.dart';
-import 'package:akira/models/catalog_item.dart';
-import 'package:akira/services/gemini_service.dart';
-import 'package:akira/controllers/home_controller.dart';
-import 'package:akira/services/scrape_creators_pinterest_service.dart';
+import 'package:fabisy/screens/try_on_screen.dart';
+import 'package:fabisy/models/catalog_item.dart';
+import 'package:fabisy/services/gemini_service.dart';
+import 'package:fabisy/controllers/home_controller.dart';
+import 'package:fabisy/services/scrape_creators_pinterest_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
@@ -170,9 +170,9 @@ class _UpdatedMobileHomeScreenState extends State<UpdatedMobileHomeScreen> {
 
     try {
       final dir = await getTemporaryDirectory();
-      final file = await File('${dir.path}/akira_tryon_${DateTime.now().millisecondsSinceEpoch}.png').create();
+      final file = await File('${dir.path}/fabisy_tryon_${DateTime.now().millisecondsSinceEpoch}.png').create();
       await file.writeAsBytes(_generatedImageBytes!);
-      await Share.shareXFiles([XFile(file.path)], text: 'Virtual Try-On Result from Akira');
+      await Share.shareXFiles([XFile(file.path)], text: 'Make Yourself Fabulous Result from fabisy');
       
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -240,7 +240,7 @@ class _UpdatedMobileHomeScreenState extends State<UpdatedMobileHomeScreen> {
       child: Row(
         children: [
           const Text(
-            'Virtual Try-On',
+            'Make Yourself Fabulous',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -560,7 +560,7 @@ class _UpdatedMobileHomeScreenState extends State<UpdatedMobileHomeScreen> {
                   ),
                   SizedBox(width: 12),
                   Text(
-                    'Generating your virtual try-on...',
+                    'Generating your Make Yourself Fabulous...',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,

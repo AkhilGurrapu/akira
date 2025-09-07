@@ -151,7 +151,7 @@ class PinterestItem {
   );
   
   String generateTryOnPrompt() => '''
-    Fashion item for virtual try-on:
+    Fashion item for Make Yourself Fabulous:
     - Category: $category
     - Style: $title
     - Description: $description

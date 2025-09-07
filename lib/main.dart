@@ -1,4 +1,4 @@
-import 'package:akira/screens/main_navigation.dart';
+import 'package:fabisy/screens/main_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Akira - Virtual Try-On',
+      title: 'fabisy - Make Yourself Fabulous',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,

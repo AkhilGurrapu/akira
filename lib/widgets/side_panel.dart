@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:akira/models/catalog_item.dart';
+import 'package:fabisy/models/catalog_item.dart';
 
 class SidePanel extends StatefulWidget {
   final bool hasImage;

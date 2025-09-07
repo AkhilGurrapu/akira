@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:akira/controllers/search_controller.dart' as search_ctrl;
-import 'package:akira/controllers/home_controller.dart';
-import 'package:akira/services/scrape_creators_pinterest_service.dart';
-import 'package:akira/screens/try_on_screen.dart';
+import 'package:fabisy/controllers/search_controller.dart' as search_ctrl;
+import 'package:fabisy/controllers/home_controller.dart';
+import 'package:fabisy/services/scrape_creators_pinterest_service.dart';
+import 'package:fabisy/screens/try_on_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 

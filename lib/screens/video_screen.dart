@@ -91,7 +91,7 @@ class VideoScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             _buildVideoCard(
-                              'Virtual Try-On Guide',
+                              'Make Yourself Fabulous Guide',
                               'Getting the Best Results',
                               '2:15',
                             ),

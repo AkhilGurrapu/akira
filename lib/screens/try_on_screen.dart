@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:akira/services/gemini_service.dart';
-import 'package:akira/models/catalog_item.dart';
+import 'package:fabisy/services/gemini_service.dart';
+import 'package:fabisy/models/catalog_item.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:akira/widgets/side_panel.dart';
+import 'package:fabisy/widgets/side_panel.dart';
 import 'package:flutter/material.dart';
 
 class TryOnScreen extends StatefulWidget {
@@ -114,7 +114,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
           ),
         ),
         title: const Text(
-          'Virtual Try-On',
+          'Make Yourself Fabulous',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -262,7 +262,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
                             ),
                                             SizedBox(height: 16),
                                             Text(
-                                              'Generating your virtual try-on...',
+                                              'Generating your Make Yourself Fabulous...',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 16,
@@ -562,7 +562,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
       final dir = await getTemporaryDirectory();
       final file = await File('${dir.path}/try_on_${DateTime.now().millisecondsSinceEpoch}.png').create();
       await file.writeAsBytes(bytes);
-      await Share.shareXFiles([XFile(file.path)], text: 'Virtual Try-On result');
+      await Share.shareXFiles([XFile(file.path)], text: 'Make Yourself Fabulous result');
     } catch (e) {
       _setError('Export failed: $e');
     }
